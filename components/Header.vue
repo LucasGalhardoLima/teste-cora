@@ -1,68 +1,75 @@
 <script>
 export default {
   name: 'Header',
+  data: () => ({
+    option: 'all',
+  }),
 }
 </script>
 
 <template>
   <div class="flex gap-10 items-center flex-wrap">
     <button
-      class="
-        rounded-full
-        px-4
-        py-1
-        text-base
-        focus:bg-pink-500
-        focus:text-white
-        focus:outline-none
-        hover:bg-gray-100
-        text-pink-500
-      "
+      :class="{
+        'rounded-full': true,
+        'px-4': true,
+        'py-1': true,
+        'text-base': true,
+        'focus:outline-none': true,
+        'focus:bg-pink-500': true,
+        'text-pink-500': option !== 'all',
+        'hover:bg-gray-100': option !== 'all',
+        'bg-pink-500 text-white': option === 'all',
+      }"
+      @click="option = 'all'"
     >
       Tudo
     </button>
     <button
-      class="
-        rounded-full
-        px-4
-        py-1
-        text-base
-        focus:bg-pink-500
-        focus:text-white
-        focus:outline-none
-        hover:bg-gray-100
-        text-pink-500
-      "
+      :class="{
+        'rounded-full': true,
+        'px-4': true,
+        'py-1': true,
+        'text-base': true,
+        'focus:outline-none': true,
+        'focus:bg-pink-500': true,
+        'text-pink-500': option !== 'entry',
+        'hover:bg-gray-100': option !== 'entry',
+        'bg-pink-500 text-white': option === 'entry',
+      }"
+      @click="option = 'entry'"
     >
       Entrada
     </button>
     <button
-      class="
-        rounded-full
-        px-4
-        py-1
-        text-base
-        focus:bg-pink-500
-        focus:text-white
-        focus:outline-none
-        hover:bg-gray-100
-        text-pink-500
-      "
+      :class="{
+        'rounded-full': true,
+        'px-4': true,
+        'py-1': true,
+        'text-base': true,
+        'focus:outline-none': true,
+        'focus:bg-pink-500': true,
+        'text-pink-500': option !== 'exit',
+        'hover:bg-gray-100': option !== 'exit',
+        'bg-pink-500 text-white': option === 'exit',
+      }"
+      @click="option = 'exit'"
     >
       Saída
     </button>
     <button
-      class="
-        rounded-full
-        px-4
-        py-1
-        text-base
-        focus:bg-pink-500
-        focus:text-white
-        focus:outline-none
-        hover:bg-gray-100
-        text-pink-500
-      "
+      :class="{
+        'rounded-full': true,
+        'px-4': true,
+        'py-1': true,
+        'text-base': true,
+        'focus:outline-none': true,
+        'focus:bg-pink-500': true,
+        'text-pink-500': option !== 'future',
+        'hover:bg-gray-100': option !== 'future',
+        'bg-pink-500 text-white': option === 'future',
+      }"
+      @click="option = 'future'"
     >
       Futuro
     </button>
