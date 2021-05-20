@@ -6,7 +6,10 @@
 # install dependencies
 $ yarn install
 
-# serve with hot reload at localhost:3000
+# run a server with the json data (you must run it before yarn dev)
+$ json-server data/data.json 
+
+# serve with hot reload at localhost:3000 or a random port if 3000 is used
 $ yarn dev
 
 # build for production and launch server

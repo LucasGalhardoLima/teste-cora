@@ -10,7 +10,6 @@ export default {
   },
   mounted() {
     this.listHistory()
-    console.log(this.getListHistory)
   },
   methods: {
     ...mapActions(['listHistory']),
@@ -22,12 +21,17 @@ export default {
   <div class="container">
     <div>
       <Header class="pb-10" />
-      <History
-        v-for="(item, pos) in getListHistory.results"
-        :key="pos"
-        :item-pos="pos"
-        :item="item"
-      />
+      <div v-if="getListHistory.length > 0">
+        <History
+          v-for="(item, pos) in getListHistory"
+          :key="pos"
+          :item-pos="pos"
+          :item="item"
+        />
+      </div>
+      <p v-else class="text-center py-12 text-pink-500 text-2xl">
+        Nenhum item encontrado :'(
+      </p>
     </div>
   </div>
 </template>

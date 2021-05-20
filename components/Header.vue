@@ -1,9 +1,27 @@
 <script>
+import { mapActions } from 'vuex'
 export default {
   name: 'Header',
   data: () => ({
     option: 'all',
+    search: '',
   }),
+  watch: {
+    async option(after, before) {
+      await this.listHistoryByStatus(this.option)
+      if (this.search)
+        await this.searchListHistory({
+          search: this.search,
+          option: this.option,
+        })
+    },
+    async search(after, before) {
+      await this.searchListHistory({ search: this.search, option: this.option })
+    },
+  },
+  methods: {
+    ...mapActions(['listHistoryByStatus', 'searchListHistory']),
+  },
 }
 </script>
 
@@ -33,11 +51,11 @@ export default {
         'text-base': true,
         'focus:outline-none': true,
         'focus:bg-pink-500': true,
-        'text-pink-500': option !== 'entry',
-        'hover:bg-gray-100': option !== 'entry',
-        'bg-pink-500 text-white': option === 'entry',
+        'text-pink-500': option !== 'CREDIT',
+        'hover:bg-gray-100': option !== 'CREDIT',
+        'bg-pink-500 text-white': option === 'CREDIT',
       }"
-      @click="option = 'entry'"
+      @click="option = 'CREDIT'"
     >
       Entrada
     </button>
@@ -49,11 +67,11 @@ export default {
         'text-base': true,
         'focus:outline-none': true,
         'focus:bg-pink-500': true,
-        'text-pink-500': option !== 'exit',
-        'hover:bg-gray-100': option !== 'exit',
-        'bg-pink-500 text-white': option === 'exit',
+        'text-pink-500': option !== 'DEBIT',
+        'hover:bg-gray-100': option !== 'DEBIT',
+        'bg-pink-500 text-white': option === 'DEBIT',
       }"
-      @click="option = 'exit'"
+      @click="option = 'DEBIT'"
     >
       Saída
     </button>
@@ -87,6 +105,7 @@ export default {
         />
       </svg>
       <input
+        v-model="search"
         class="
           focus:border-pink-100
           focus:ring-1 focus:ring-pink-500

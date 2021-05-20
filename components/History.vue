@@ -1,4 +1,9 @@
 <script>
+/* eslint-disable vue/no-v-html */
+import { format } from 'date-fns'
+
+import { pt } from 'date-fns/locale'
+
 export default {
   name: 'History',
   props: {
@@ -12,6 +17,17 @@ export default {
     },
   },
   methods: {
+    formatDate(itemDate, opt) {
+      if (!opt) {
+        const date = format(new Date(itemDate), '	PPP', {
+          locale: pt,
+        })
+        return date.substr(0, date.length - 8)
+      } else
+        return format(new Date(itemDate), 'dd MMM yyyy - HH:mm', {
+          locale: pt,
+        })
+    },
     renderTransactionIcon(status) {
       switch (status) {
         case 'COMPLETED':
@@ -117,13 +133,12 @@ export default {
           break
       }
     },
-    format(mask, number) {
-      const s = '' + number
-      let r = ''
-      for (let im = 0, is = 0; im < mask.length && is < s.length; im++) {
-        r += mask[im] === 'X' ? s.charAt(is++) : mask.charAt(im)
-      }
-      return r
+    formatReal(int) {
+      let tmp = int + ''
+      tmp = tmp.replace(/([0-9]{2})$/g, ',$1')
+      if (tmp.length > 6) tmp = tmp.replace(/([0-9]{3}),([0-9]{2}$)/g, '.$1,$2')
+
+      return tmp
     },
   },
 }
@@ -131,31 +146,41 @@ export default {
 
 <template>
   <div>
-    <div class="flex justify-between items-center py-6 pl-4 pr-9">
+    <div
+      :class="[
+        'grid',
+        { 'grid-cols-4': itemPos === 0 },
+        'items-center',
+        'py-6',
+        'pl-4',
+        'pr-9',
+        { 'grid-cols-2': itemPos > 0 },
+      ]"
+    >
       <div>
-        <p class="font-black text-xs text-gray-900">{{ item.date }}</p>
+        <p class="font-black text-xs text-gray-800">
+          {{ item.date && formatDate(item.date) }}
+        </p>
       </div>
-      <div v-if="itemPos === 0">
+      <div v-if="itemPos === 0" class="text-center">
         <p class="text-sm text-gray-500">Tipo de transação</p>
       </div>
-      <div v-if="itemPos === 0">
+      <div v-if="itemPos === 0" class="text-center">
         <p class="font-black text-sm text-pink-500">Data</p>
       </div>
-      <div v-if="itemPos === 0"><p class="text-sm text-gray-500">Valor</p></div>
-      <div v-if="itemPos > 0">
+      <div v-if="itemPos === 0" class="text-right">
+        <p class="text-sm text-gray-500">Valor</p>
+      </div>
+      <div v-if="itemPos > 0" class="text-right">
         <p class="text-sm text-gray-500">
           saldo do dia
-          {{
-            item.amountTotal &&
-            item.amountTotal.toLocaleString('pt-BR', {
-              style: 'currency',
-              currency: 'BRL',
-            })
-          }}
+          <span class="font-black text-gray-800">{{
+            item.amountTotal && formatReal(item.amountTotal)
+          }}</span>
         </p>
       </div>
     </div>
-    <hr class="divider" />
+    <hr class="divider ml-2" />
     <div
       class="
         relative
@@ -171,28 +196,50 @@ export default {
       <div
         v-for="(_item, index) in item.items"
         :key="index"
-        :class="{
-          flex: true,
-          'justify-between items-center gap-4': true,
-          'pb-7': item.items.length > 1 && index < item.items.length - 1,
-        }"
+        :class="[
+          'grid',
+          'grid-cols-4',
+          'items-center',
+          'gap-4',
+          {
+            'pb-7': item.items.length > 1 && index < item.items.length - 1,
+          },
+        ]"
       >
         <div class="flex items-center gap-2">
           <div v-html="renderTransactionIcon(_item.status)"></div>
           <p class="text-gray-500">{{ _item.actor }}</p>
         </div>
-        <div>
+        <div class="text-center">
           <p class="text-gray-500">{{ renderTransaction(_item) }}</p>
         </div>
-        <div class="col-start-3.5">
-          <p class="text-gray-500">{{ _item.dateEvent }}</p>
+        <div class="col-start-3.5 text-center">
+          <p class="text-gray-500 capitalize">
+            {{ _item.dateEvent && formatDate(_item.dateEvent, 'hours') }}
+          </p>
         </div>
-        <div>
-          <p class="text-gray-500">{{ _item.amount }}</p>
+        <div class="text-right">
+          <p
+            :class="[
+              'text-gray-800',
+              {
+                'text-blue-400 font-extrabold':
+                  _item.entry === 'CREDIT' && !_item.scheduled,
+              },
+              { 'line-through': _item.entry === 'DEBIT' && !_item.scheduled },
+              { 'text-pink-500 font-extrabold': _item.scheduled },
+            ]"
+          >
+            <span class="font-normal">{{
+              _item.entry === 'CREDIT' ? '+' : _item.scheduled ? '-' : ''
+            }}</span>
+            <span class="font-normal">R$</span>
+            {{ _item.amount && formatReal(_item.amount) }}
+          </p>
         </div>
       </div>
     </div>
-    <hr class="divider" />
+    <hr class="divider ml-2" />
   </div>
 </template>
 
